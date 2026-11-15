@@ -1,0 +1,40 @@
+{
+  "_note": "Rough planning defaults, not measurements. CPC in account currency, CTR and CVR as fractions. Edit these to match your market or replace them with your own account data. Google CPC is overridden by Keyword Planner bids when a keyword CSV is supplied.",
+  "platforms": {
+    "google": {"label": "Google Search", "min_daily": 10, "min_note": "Google has no hard minimum. Below about 10 per day a search campaign gets too few clicks to judge."},
+    "meta": {"label": "Meta (Facebook + Instagram)", "min_daily": 5, "min_note": "Meta accepts lower budgets, but under about 5 per day per ad set delivery rarely stabilises."},
+    "tiktok": {"label": "TikTok", "min_daily": 20, "min_note": "TikTok enforces a minimum daily budget per ad group (20 in most account currencies when this was written). Check Ads Manager for your currency."}
+  },
+  "business_types": {
+    "ecommerce": {
+      "fit": {"google": 0.40, "meta": 0.40, "tiktok": 0.20},
+      "google": {"cpc": [0.40, 1.50], "ctr": [0.020, 0.050], "cvr": [0.015, 0.035]},
+      "meta": {"cpc": [0.30, 1.20], "ctr": [0.008, 0.020], "cvr": [0.008, 0.025]},
+      "tiktok": {"cpc": [0.15, 0.80], "ctr": [0.005, 0.015], "cvr": [0.005, 0.018]}
+    },
+    "local_service": {
+      "fit": {"google": 0.60, "meta": 0.30, "tiktok": 0.10},
+      "google": {"cpc": [1.50, 5.00], "ctr": [0.040, 0.080], "cvr": [0.050, 0.120]},
+      "meta": {"cpc": [0.50, 1.80], "ctr": [0.008, 0.020], "cvr": [0.020, 0.060]},
+      "tiktok": {"cpc": [0.30, 1.00], "ctr": [0.005, 0.012], "cvr": [0.010, 0.030]}
+    },
+    "saas": {
+      "fit": {"google": 0.55, "meta": 0.30, "tiktok": 0.15},
+      "google": {"cpc": [2.00, 8.00], "ctr": [0.030, 0.060], "cvr": [0.020, 0.050]},
+      "meta": {"cpc": [0.80, 3.00], "ctr": [0.006, 0.015], "cvr": [0.010, 0.030]},
+      "tiktok": {"cpc": [0.50, 2.00], "ctr": [0.004, 0.012], "cvr": [0.005, 0.020]}
+    },
+    "app": {
+      "fit": {"google": 0.30, "meta": 0.35, "tiktok": 0.35},
+      "google": {"cpc": [0.50, 2.00], "ctr": [0.020, 0.050], "cvr": [0.100, 0.250]},
+      "meta": {"cpc": [0.30, 1.20], "ctr": [0.008, 0.020], "cvr": [0.080, 0.200]},
+      "tiktok": {"cpc": [0.20, 0.80], "ctr": [0.006, 0.018], "cvr": [0.080, 0.180]}
+    },
+    "other": {
+      "fit": {"google": 0.50, "meta": 0.35, "tiktok": 0.15},
+      "google": {"cpc": [0.80, 3.00], "ctr": [0.030, 0.060], "cvr": [0.020, 0.060]},
+      "meta": {"cpc": [0.40, 1.50], "ctr": [0.008, 0.020], "cvr": [0.010, 0.030]},
+      "tiktok": {"cpc": [0.25, 1.00], "ctr": [0.005, 0.015], "cvr": [0.005, 0.020]}
+    }
+  }
+}

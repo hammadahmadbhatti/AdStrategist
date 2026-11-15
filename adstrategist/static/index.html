@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AdStrategist</title>
+<style>
+:root{--bg:#fbfaf7;--card:#fff;--ink:#1c2430;--muted:#5d6878;--line:#e3e0d8;--accent:#0f6b5c;--accent-ink:#fff;--soft:#eef5f3;--warn:#8a5a00;--warnbg:#fff6e0;--bad:#a8322a;--ok:#1d7a4f}
+@media (prefers-color-scheme:dark){:root{--bg:#14181d;--card:#1b2027;--ink:#e8ecf1;--muted:#9aa5b4;--line:#2c343f;--accent:#5fcfb8;--accent-ink:#0c1a17;--soft:#17262a;--warn:#f2c46b;--warnbg:#2b2415;--bad:#ff8f85;--ok:#6fd6a0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{max-width:1180px;margin:0 auto;padding:28px 16px 8px}
+header h1{font-size:26px;margin:0;letter-spacing:-.01em}
+header p{margin:4px 0 0;color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card + .card{margin-top:16px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
+label.field{display:block;font-size:14px;color:var(--muted);margin:0 0 4px}
+input[type=text],input[type=url],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:9px;cursor:pointer}
+.check:hover{background:var(--soft)}
+.check input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.check b{display:block;font-weight:600}
+.check span{display:block;font-size:13.5px;color:var(--muted)}
+.check.locked{opacity:.7;cursor:default}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14.5px}
+.pill input{accent-color:var(--accent)}
+.hint{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.status{font-size:13.5px;margin:6px 0 12px;padding:8px 10px;border-radius:8px;background:var(--soft)}
+.status.bad{background:var(--warnbg);color:var(--warn)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
+.status.bad .dot{background:var(--warn)}
+button.go{width:100%;padding:14px;border:0;border-radius:11px;background:var(--accent);color:var(--accent-ink);font:600 16px/1 inherit;cursor:pointer;margin-top:16px}
+button.go:disabled{opacity:.55;cursor:wait}
+details summary{cursor:pointer;color:var(--muted);font-size:14.5px;margin-bottom:10px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.steps li:last-child{border-bottom:0}
+.steps .mark{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;flex:none}
+.steps li.running .mark{border-color:var(--accent);border-top-color:transparent;animation:spin .9s linear infinite}
+.steps li.done .mark{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps li.error .mark{background:var(--bad);border-color:var(--bad);color:#fff}
+.steps li small{color:var(--muted);margin-left:auto;text-align:right}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.steps li.running .mark{animation:none}}
+.log{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);max-height:170px;overflow:auto;margin-top:12px;white-space:pre-wrap;word-break:break-word}
+.log .warn{color:var(--warn)}.log .error{color:var(--bad)}
+.files{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.files a{font-size:13.5px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--accent);text-decoration:none}
+iframe{width:100%;height:78vh;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+video{max-height:420px;border-radius:12px;display:block;margin:0 0 14px;background:#000}
+.empty{color:var(--muted);text-align:center;padding:60px 16px}
+.error-box{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-radius:9px;margin-top:12px;font-size:14.5px}
+.ask{margin:0 0 16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.ask-row{display:flex;gap:8px}.ask-row button{padding:0 18px;border:0;border-radius:9px;background:var(--accent);color:var(--accent-ink);font:600 15px/1 inherit;cursor:pointer}
+.ask-row button:disabled{opacity:.55;cursor:wait}
+#answer{margin-top:12px;font-size:15px;white-space:pre-wrap}
+#answer .src{margin-top:10px;padding:9px 11px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 8px 8px 0;font-size:13.5px;white-space:normal}
+#answer .src a{color:var(--accent);word-break:break-all}#answer .src q{display:block;color:var(--muted);margin-top:3px}
+.history a{display:block;padding:6px 0;color:var(--accent);text-decoration:none;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+<header>
+  <h1>AdStrategist</h1>
+  <p>Paste a link. Pick what you want done and which model does it. Everything runs on this computer unless you choose a paid model.</p>
+</header>
+<div class="wrap">
+  <form id="form" autocomplete="off">
+    <div class="card">
+      <h2>1. Link</h2>
+      <label class="field" for="url">Product, website or app link</label>
+      <input id="url" type="text" inputmode="url" placeholder="https://example.com" required>
+    </div>
+
+    <div class="card">
+      <h2>2. What should it do</h2>
+      <div id="steps"></div>
+      <p class="hint">Steps that depend on another step switch it on automatically.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Ad platforms</h2>
+      <div class="pills" id="platforms"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. Budget</h2>
+      <div class="row">
+        <div><label class="field" for="budget">Monthly budget (optional)</label><input id="budget" type="number" min="1" step="1" placeholder="propose one for me"></div>
+        <div><label class="field" for="currency">Currency</label><input id="currency" type="text" maxlength="3"></div>
+      </div>
+      <div class="row">
+        <div><label class="field" for="country">Market (country code)</label><input id="country" type="text" maxlength="2"></div>
+        <div><label class="field" for="value">Value of one customer (optional)</label><input id="value" type="number" min="0" step="1" placeholder="for payback check"></div>
+      </div>
+      <label class="field" for="video">Video ad</label>
+      <select id="video">
+        <option value="auto">Decide for me (only if Meta or TikTok is funded)</option>
+        <option value="yes">Always make one</option>
+        <option value="no">No video</option>
+      </select>
+      <label class="field" for="media" style="margin-top:12px">Your own photos and video clips (optional)</label>
+      <input id="media" type="file" multiple accept="image/*,video/*,.heic,.mov">
+      <p class="hint" id="media-hint">Shown in the order you select them, one scene each. The local model writes the script around them. Leave empty to use images from the site.</p>
+    </div>
+
+    <div class="card">
+      <h2>5. Models</h2>
+      <label class="field" for="research">Research model: reads pages, classifies, extracts</label>
+      <select id="research"></select>
+      <div class="status" id="research-status"></div>
+      <label class="field" for="writing">Writing model: ad copy, gap analysis, summary</label>
+      <select id="writing"></select>
+      <div class="status" id="writing-status"></div>
+      <details>
+        <summary>Use a different model name</summary>
+        <div class="row">
+          <div><label class="field" for="research-model">Research model name</label><input id="research-model" type="text" placeholder="default from .env"></div>
+          <div><label class="field" for="writing-model">Writing model name</label><input id="writing-model" type="text" placeholder="default from .env"></div>
+        </div>
+      </details>
+      <label class="field" for="engine" style="margin-top:12px">Pipeline engine</label>
+      <select id="engine">
+        <option value="native">Native: plain step-by-step loop</option>
+        <option value="langgraph">LangGraph: state graph that reviews and revises ad copy</option>
+      </select>
+      <label class="check" style="padding-left:0;margin-top:8px"><input id="rag" type="checkbox" checked>
+        <div><b>Use retrieval (RAG)</b><span id="rag-status"></span></div></label>
+      <p class="hint">Paid models need a key in the <code>.env</code> file. Keys are never shown or sent to this page.</p>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>More options</summary>
+        <label class="field" for="competitors">Competitor links you already know (one per line)</label>
+        <textarea id="competitors" placeholder="https://competitor-one.com"></textarea>
+        <label class="field" for="seeds" style="margin-top:12px">Search phrases to research (one per line, optional)</label>
+        <textarea id="seeds" placeholder="leave empty to find them automatically"></textarea>
+        <div class="row" style="margin-top:12px">
+          <div><label class="field" for="language">Ad language (optional)</label><input id="language" type="text" maxlength="2" placeholder="from the page"></div>
+          <div><label class="field" for="maxc">Competitors to analyse</label><input id="maxc" type="number" min="1" max="10" value="5"></div>
+        </div>
+        <label class="field" for="csv">Google Keyword Planner CSV (adds real search volumes and bids)</label>
+        <input id="csv" type="file" accept=".csv,.tsv,.txt">
+      </details>
+      <button class="go" id="go" type="submit">Run research</button>
+      <div class="error-box" id="form-error" hidden></div>
+    </div>
+
+    <div class="card history" id="history-card" hidden>
+      <h2>Earlier runs</h2>
+      <div id="history"></div>
+    </div>
+  </form>
+
+  <section>
+    <div class="card" id="progress-card" hidden>
+      <h2>Progress</h2>
+      <ul class="steps" id="progress"></ul>
+      <div class="log" id="log"></div>
+    </div>
+    <div class="card" id="result-card">
+      <div class="empty" id="empty">The report appears here when a run finishes.</div>
+      <div id="result" hidden>
+        <h2>Result files</h2>
+        <div class="files" id="files"></div>
+        <form id="ask-form" class="ask" hidden>
+          <label class="field" for="question">Ask about this research</label>
+          <div class="ask-row"><input id="question" type="text" placeholder="For example: which competitors offer a guarantee?" autocomplete="off">
+            <button id="ask-go" type="submit">Ask</button></div>
+          <div id="answer" hidden></div>
+        </form>
+        <video id="player" controls playsinline hidden></video>
+        <iframe id="report" title="Report"></iframe>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let options = null, timer = null, currentRun = null;
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v; else if (k in node) node[k] = v; else node.setAttribute(k, v);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+
+function providerStatus(selectId, statusId) {
+  const row = options.providers.find(p => p.id === $(selectId).value);
+  const box = $(statusId);
+  box.className = "status" + (row.available ? "" : " bad");
+  box.replaceChildren(el("span", {class: "dot"}), document.createTextNode(
+    (row.available ? "Ready. " : "Not ready. ") + row.detail + (row.model ? "  Model: " + row.model : "") +
+    (row.models.length ? "  Available: " + row.models.slice(0, 8).join(", ") : "")));
+}
+
+function syncDependencies(changed) {
+  const byId = Object.fromEntries(options.steps.map(s => [s.id, s]));
+  const box = id => document.querySelector(`#steps input[value="${id}"]`);
+  if (changed && box(changed).checked) {
+    const stack = [...byId[changed].needs];
+    while (stack.length) { const id = stack.pop(); box(id).checked = true; stack.push(...byId[id].needs); }
+  } else if (changed) {
+    for (const s of options.steps) if (s.needs.includes(changed) && box(s.id).checked) { box(s.id).checked = false; syncDependencies(s.id); }
+  }
+}
+
+async function loadOptions() {
+  options = await (await fetch("/api/options")).json();
+  for (const s of options.steps) {
+    const input = el("input", {type: "checkbox", value: s.id, checked: true, disabled: s.always});
+    input.addEventListener("change", () => syncDependencies(s.id));
+    $("steps").append(el("label", {class: "check" + (s.always ? " locked" : "")}, input,
+      el("div", {}, el("b", {}, s.label), el("span", {}, s.description))));
+  }
+  for (const p of options.platforms) {
+    $("platforms").append(el("label", {class: "pill"}, el("input", {type: "checkbox", value: p.id, checked: true}), p.label));
+  }
+  for (const id of ["research", "writing"]) {
+    for (const p of options.providers) {
+      $(id).append(el("option", {value: p.id}, p.label + (p.available ? "" : " (not ready)")));
+    }
+    $(id).value = options.defaults[id + "_provider"];
+    $(id).addEventListener("change", () => providerStatus(id, id + "-status"));
+    providerStatus(id, id + "-status");
+  }
+  $("engine").value = options.engine;
+  $("rag-status").textContent = options.rag.detail;
+  $("rag").checked = options.rag.ready;
+  $("rag").disabled = !options.rag.ready;
+  const media = options.media;
+  $("media-hint").textContent = `Up to ${media.max_files} files, shown in the order listed, one scene each. ` +
+    "The local model writes the script around them. " + media.vision.detail + " Leave empty to use images from the site.";
+  $("currency").value = options.defaults.currency;
+  $("country").value = options.defaults.country;
+}
+
+async function loadHistory() {
+  const rows = await (await fetch("/api/runs")).json();
+  $("history-card").hidden = rows.length === 0;
+  $("history").replaceChildren(...rows.map(r => {
+    const link = el("a", {href: "#"}, `${r.started.replace("T", " ")}  ${r.url}`);
+    link.addEventListener("click", e => { e.preventDefault(); showResult(r.id); });
+    return link;
+  }));
+}
+
+function fileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderProgress(steps) {
+  $("progress").replaceChildren(...steps.map(id => {
+    const info = options.steps.find(s => s.id === id);
+    return el("li", {id: "step-" + id}, el("span", {class: "mark"}), el("span", {}, info.label), el("small", {}));
+  }));
+  $("log").replaceChildren();
+}
+
+function applyEvent(event) {
+  const row = $("step-" + event.step);
+  if (row) {
+    if (event.level === "start") row.className = "running";
+    if (event.level === "done") { row.className = "done"; row.querySelector(".mark").textContent = "✓"; row.querySelector("small").textContent = event.t + " s"; }
+    if (event.level === "error" || (event.level === "warn" && event.message.startsWith("Skipped"))) {
+      row.className = "error"; row.querySelector(".mark").textContent = "!"; row.querySelector("small").textContent = "see report";
+    }
+  }
+  if (["info", "warn", "error"].includes(event.level) || event.step === "finish") {
+    $("log").append(el("div", {class: event.level}, `[${event.t}s] ${event.message}`));
+    $("log").scrollTop = $("log").scrollHeight;
+  }
+}
+
+async function showResult(id) {
+  const data = await (await fetch(`/api/runs/${id}`)).json();
+  $("empty").hidden = true;
+  $("result").hidden = false;
+  $("files").replaceChildren(...data.files.map(f => el("a", {href: `/runs/${id}/${f}`, target: "_blank", download: f.split("/").pop()}, f)));
+  const video = data.files.find(f => f.endsWith(".mp4"));
+  $("player").hidden = !video;
+  if (video) { $("player").src = `/runs/${id}/${video}`; $("player").poster = `/runs/${id}/video/poster.jpg`; }
+  $("report").src = `/runs/${id}/report.html`;
+  currentRun = id;
+  $("ask-form").hidden = !data.has_index;
+  $("answer").hidden = true;
+  $("result-card").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+async function poll(id, since) {
+  const data = await (await fetch(`/api/runs/${id}?since=${since}`)).json();
+  data.events.forEach(applyEvent);
+  if (data.status === "running") { timer = setTimeout(() => poll(id, data.next), 1000); return; }
+  $("go").disabled = false;
+  $("go").textContent = "Run research";
+  if (data.status === "error") { $("form-error").hidden = false; $("form-error").textContent = data.error; return; }
+  await showResult(id);
+  loadHistory();
+}
+
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("form-error").hidden = true;
+  const checked = sel => [...document.querySelectorAll(sel + " input:checked")].map(i => i.value);
+  const file = $("csv").files[0];
+  const mediaFiles = [...$("media").files];
+  let uploadId = "";
+  $("go").disabled = true;
+  if (mediaFiles.length) {
+    try {
+      uploadId = (await (await fetch("/api/uploads", {method: "POST"})).json()).id;
+      for (const [i, item] of mediaFiles.entries()) {
+        $("go").textContent = `Copying file ${i + 1} of ${mediaFiles.length}...`;
+        const sent = await fetch(`/api/uploads/${uploadId}/${encodeURIComponent(item.name)}`, {method: "PUT", body: item});
+        if (!sent.ok) throw new Error((await sent.json()).detail || "The file could not be copied.");
+      }
+    } catch (error) {
+      $("form-error").hidden = false;
+      $("form-error").textContent = error.message;
+      $("go").disabled = false;
+      $("go").textContent = "Run research";
+      return;
+    }
+  }
+  const body = {
+    url: $("url").value.trim(),
+    steps: checked("#steps"),
+    platforms: checked("#platforms"),
+    budget: $("budget").value ? Number($("budget").value) : null,
+    currency: $("currency").value.trim(),
+    country: $("country").value.trim(),
+    language: $("language").value.trim(),
+    competitors: $("competitors").value.split("\n").map(s => s.trim()).filter(Boolean),
+    max_competitors: Number($("maxc").value) || 5,
+    seed_keywords: $("seeds").value.split("\n").map(s => s.trim()).filter(Boolean),
+    customer_value: $("value").value ? Number($("value").value) : null,
+    video: $("video").value,
+    upload_id: uploadId,
+    engine: $("engine").value,
+    rag: $("rag").checked,
+    research_provider: $("research").value,
+    research_model: $("research-model").value.trim(),
+    writing_provider: $("writing").value,
+    writing_model: $("writing-model").value.trim(),
+    keyword_csv_b64: file ? await fileAsBase64(file) : "",
+  };
+  $("go").disabled = true;
+  $("go").textContent = "Working...";
+  const response = await fetch("/api/runs", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const data = await response.json();
+  if (!response.ok) {
+    $("form-error").hidden = false;
+    $("form-error").textContent = typeof data.detail === "string" ? data.detail : "Please check the form values.";
+    $("go").disabled = false;
+    $("go").textContent = "Run research";
+    return;
+  }
+  $("progress-card").hidden = false;
+  renderProgress(data.steps);
+  $("progress-card").scrollIntoView({behavior: "smooth", block: "start"});
+  clearTimeout(timer);
+  poll(data.id, 0);
+});
+
+$("ask-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const question = $("question").value.trim();
+  if (!question || !currentRun) return;
+  $("ask-go").disabled = true;
+  $("ask-go").textContent = "Searching...";
+  const box = $("answer");
+  try {
+    const response = await fetch(`/api/runs/${currentRun}/ask`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({question})});
+    const data = await response.json();
+    box.hidden = false;
+    if (!response.ok) { box.replaceChildren(document.createTextNode(typeof data.detail === "string" ? data.detail : "The question could not be answered.")); return; }
+    box.replaceChildren(document.createTextNode(data.answer), ...data.sources.map(s => {
+      const where = s.kind === "page" ? el("a", {href: s.url, target: "_blank", rel: "noopener"}, s.url) : document.createTextNode(s.title);
+      return el("div", {class: "src"}, `[${s.n}] `, where, ` (similarity ${s.score.toFixed(2)})`, el("q", {}, s.quote.slice(0, 260)));
+    }));
+  } finally {
+    $("ask-go").disabled = false;
+    $("ask-go").textContent = "Ask";
+  }
+});
+
+loadOptions().then(loadHistory);
+</script>
+</body>
+</html>

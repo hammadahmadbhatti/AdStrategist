@@ -104,10 +104,18 @@ def run_graph(ctx, steps: list[str], errors: dict, timings: dict, current: dict)
     final = app.invoke({"results": {}, "errors": {}, "path": [], "copy_attempts": 0, "copy_revisions": 0},
                        {"recursion_limit": 4 * len(steps) + 10})
     ctx.copy_feedback = ""
-    mermaid = app.get_graph().draw_mermaid()
+    mermaid = readable(app.get_graph().draw_mermaid())
     (ctx.run_dir / "graph.mmd").write_text(mermaid, encoding="utf-8")
     return {"nodes": len(app.get_graph().nodes) - 2, "path": final.get("path", []),
             "copy_revisions": final.get("copy_revisions", 0), "diagram": "graph.mmd"}
+
+
+def readable(mermaid: str) -> str:
+    """LangGraph's diagram uses pale boxes with the page's text colour, which is unreadable on a dark
+    page (GitHub dark theme). Pin a dark text colour on the pale boxes."""
+    return (mermaid.replace("classDef default fill:#f2f0ff,line-height:1.2",
+                            "classDef default fill:#f2f0ff,color:#1c2430,stroke:#8b7fe8,line-height:1.2")
+                   .replace("classDef last fill:#bfb6fc", "classDef last fill:#bfb6fc,color:#1c2430"))
 
 
 def diagram(steps: list[str] | None = None) -> str:
@@ -115,4 +123,4 @@ def diagram(steps: list[str] | None = None) -> str:
     from .steps import STEPS
 
     noop = lambda *_a, **_k: {}  # noqa: E731
-    return build_graph(steps or list(STEPS), noop, noop, noop).get_graph().draw_mermaid()
+    return readable(build_graph(steps or list(STEPS), noop, noop, noop).get_graph().draw_mermaid())

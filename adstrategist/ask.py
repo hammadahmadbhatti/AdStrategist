@@ -171,7 +171,8 @@ def diagram() -> str:
         def ask_text(self, *_a, **_k):
             return ""
 
-    return build_graph(_NoIndex(), _NoModel(), 0.0).get_graph().draw_mermaid()
+    from .graph import readable
+    return readable(build_graph(_NoIndex(), _NoModel(), 0.0).get_graph().draw_mermaid())
 
 
 def ask(run_dir: Path, question: str, settings: Settings, llm=None, embeddings=None) -> dict:

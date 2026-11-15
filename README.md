@@ -153,9 +153,9 @@ graph TD;
 	verify -. &nbsp;done&nbsp; .-> __end__;
 	verify -. &nbsp;correct&nbsp; .-> generate;
 	refuse --> __end__;
-	classDef default fill:#f2f0ff,line-height:1.2
+	classDef default fill:#f2f0ff,color:#1c2430,stroke:#8b7fe8,line-height:1.2
 	classDef first fill-opacity:0
-	classDef last fill:#bfb6fc
+	classDef last fill:#bfb6fc,color:#1c2430
 ```
 
 - **retrieve, then grade:** passages below the relevance threshold are discarded. With none left, the graph does not answer.
@@ -222,9 +222,9 @@ graph TD;
 	video --> summary;
 	abort --> __end__;
 	summary --> __end__;
-	classDef default fill:#f2f0ff,line-height:1.2
+	classDef default fill:#f2f0ff,color:#1c2430,stroke:#8b7fe8,line-height:1.2
 	classDef first fill-opacity:0
-	classDef last fill:#bfb6fc
+	classDef last fill:#bfb6fc,color:#1c2430
 ```
 
 Both engines call the same step functions, and a test asserts they produce identical research. Choose with `--engine langgraph`, `ENGINE=langgraph` in `.env`, or the engine menu in the web form.

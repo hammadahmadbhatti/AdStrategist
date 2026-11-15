@@ -1,6 +1,6 @@
 # AdStrategist
 
-**A local-first agentic RAG system that turns one product link into market research, a budget plan, ready-to-review ad campaigns and a video ad.**
+**Automates marketing research and builds ready-made ad campaigns from one product link: competitor and keyword research, market gaps, a budget plan, Google, Meta and TikTok campaigns and a video ad. Built as a local-first agentic RAG system.**
 
 `Python` · `LangChain` · `LangGraph` · `Chroma` · `Ollama` · `MCP` · `FastAPI` · 106 offline tests
 
